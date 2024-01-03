@@ -20,7 +20,7 @@ build:
     - apt-get update && apt-get install -y git-lfs
     - git lfs install
     - git clone https://huggingface.co/stabilityai/stable-diffusion-xl-base-1.0 /sdxlModel/stable-diffusion-xl-base-1.0
-    - wget -O /loras/sdxl_glass.safetensors https://civitai.com/api/download/models/177888
+    - wget -O /loras/crystalz-sdxl.safetensors https://civitai.com/api/download/models/202887
     
 predict: "predict.py:Predictor"
 

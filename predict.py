@@ -44,7 +44,7 @@ from dataset_and_utils import TokenEmbeddingsHandler
 
 MODEL_NAME = "/sdxlModel/stable-diffusion-xl-base-1.0"
 MODEL_CACHE = "model-cache"
-LORA_PATH = "/loras/sdxl_glass.safetensors"
+LORA_PATH = "/loras/crystalz-sdxl.safetensors"
 
 class KarrasDPM:
     def from_config(config):
@@ -184,7 +184,11 @@ class Predictor(BasePredictor):
         self,
         prompt: str = Input(
             description="Input prompt",
-            default="A portrait of glasssculpture, male, man with a viking aesthetic, with dynamic movement and bold colors. By Alex Ross, Jim Lee, or Jock.<lora:sdxl_glass:1>",
+            default="puppy",
+        ),
+        promptAddendum: str = Input(
+            description="Trigger word to invoke the LoRA style, added to end of prompt",
+            default=", crystalz <lora:crystalz:1>",
         ),
         negative_prompt: str = Input(
             description="Input Negative Prompt",
@@ -223,12 +227,12 @@ class Predictor(BasePredictor):
         guidance_scale: float = Input(
             description="Scale for classifier-free guidance", ge=1, le=50, default=7.5
         ),
-        prompt_strength: float = Input(
-            description="Prompt strength when using img2img / inpaint. 1.0 corresponds to full destruction of information in image",
-            ge=0.0,
-            le=1.0,
-            default=0.8,
-        ),
+        #prompt_strength: float = Input(
+        #    description="Prompt strength when using img2img / inpaint. 1.0 corresponds to full destruction of information in image",
+        #    ge=0.0,
+        #    le=1.0,
+        #    default=0.8,
+        #),
         seed: int = Input(
             description="Random seed. Leave blank to randomize the seed", default=None
         ),
@@ -258,6 +262,9 @@ class Predictor(BasePredictor):
             default=0.6,
         ),
     ) -> List[Path]:
+        while (prompt[-1] == " ") or (prompt[-1] == "\n"): #remove user whitespaces
+            prompt = prompt[:-1]
+        prompt = prompt + promptAddendum
         lora = True
         if lora == True :
             self.is_lora = True
